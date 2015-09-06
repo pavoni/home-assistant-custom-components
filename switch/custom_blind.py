@@ -9,20 +9,19 @@ class CustomBlind(CustomWemoMaker):
     def turn_on(self, **kwargs):
         """ Turns the switch on. """
         print('CustomBlind turn on;')
-        if (self.is_on):
-            return
         if core.is_on(self.hass, self.target):
             core.turn_off(self.hass, self.target)
         else:
             core.turn_on(self.hass, self.target)
+        super(CustomBlind, self).turn_on()
+
 
     def turn_off(self):
         """ Turns the switch off. """
         print('CustomBlind turn off;')
-        if not(self.is_on):
-            return
         if core.is_on(self.hass, self.target):
             core.turn_off(self.hass, self.target)
         else:
             core.turn_on(self.hass, self.target)
+        super(CustomBlind, self).turn_off()
 
