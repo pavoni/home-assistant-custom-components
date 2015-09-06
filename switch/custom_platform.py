@@ -20,8 +20,8 @@ DOMAIN = "custom_platform"
 def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """ Find and return blind switches. """
     add_devices_callback([
-        CustomBlind('Blind', 'switch.blind', hass),
-        CustomGate('Gate', 'switch.gate', hass),
+        CustomBlind('Blind', 'switch.blind_toggle', hass),
+        CustomGate('Gate', 'switch.gate_toggle', hass),
         CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass)
     ])
 
