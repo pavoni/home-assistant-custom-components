@@ -22,7 +22,7 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     add_devices_callback([
         CustomBlind('Blind', 'switch.blind', hass),
         CustomGate('Gate', 'switch.gate', hass),
-        CustomSkylight('Velux Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass)
+        CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass)
     ])
 
 

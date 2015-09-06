@@ -1,5 +1,7 @@
 from homeassistant.components.switch import SwitchDevice
 
+import homeassistant.components as core
+
 class CustomWemoMaker(SwitchDevice):
     """ Wraps a wemo maker using the sensor as the switch state """
 
@@ -7,6 +9,13 @@ class CustomWemoMaker(SwitchDevice):
         self._name = new_name
         self.target = maker
         self.hass = new_hass
+
+        def copy_target_state(entity_id, old_state, new_state):
+            """ Called when the target device changes state. """
+            self.hass.states.set(self.entity_id, self.get_target_state)
+
+        self.hass.states.track_change(self.target, copy_target_state)
+
 
     @property
     def state(self):
