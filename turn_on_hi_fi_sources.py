@@ -119,19 +119,24 @@ def setup(hass, config):
         pre_amp_on = global_hass.states.get(global_source).state == 'on'
         if systemline_on or pre_amp_on :
             if systemline_on :
-              print('turn_on_hi_fi_sources: turn on for SYSTEMLINE')
-              core.turn_on(global_hass, global_target1)
+                print('turn_on_hi_fi_sources: turn on for SYSTEMLINE')
+                if not core.is_on(global_hass, global_target1):
+                    core.turn_on(global_hass, global_target1)
             if pre_amp_on :
-              print('turn_on_hi_fi_sources: turn on for MAIN HI FI')
-              core.turn_on(global_hass, global_target1)
-              core.turn_on(global_hass, global_target2)
-            else:
-              core.turn_off(global_hass, global_target2)
+                print('turn_on_hi_fi_sources: turn on for MAIN HI FI')
+                if not core.is_on(global_hass, global_target1):
+                    core.turn_on(global_hass, global_target1)
+                if not core.is_on(global_hass, global_target2):
+                    core.turn_on(global_hass, global_target2)
+            elif core.is_on(global_hass, global_target2):
+                core.turn_off(global_hass, global_target2)
 
         else :
             print('turn_on_hi_fi_sources: turn off ALL')
-            core.turn_off(global_hass, global_target1)
-            core.turn_off(global_hass, global_target2)
+            if core.is_on(global_hass, global_target1):
+                core.turn_off(global_hass, global_target1)
+            if core.is_on(global_hass, global_target2):
+                core.turn_off(global_hass, global_target2)
 
     hass.states.track_change(global_source, track_sources)
     hass.states.track_change(global_maker, track_sources)
