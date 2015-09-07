@@ -42,12 +42,11 @@ DOMAIN = "turn_on_hi_fi_sources"
 DEPENDENCIES = ['group']
 
 # Configuration key for the entity id we are targetting
-CONF_TARGET = 'target'
+CONF_TARGET1 = 'target1'
+CONF_TARGET2 = 'target2'
 
-CONF_SOURCE1 = 'source1'
-CONF_SOURCE1_MW = 'source1_mw'
-CONF_SOURCE2 = 'source2'
-CONF_SOURCE2_MW = 'source2_mw'
+CONF_SOURCE = 'source'
+CONF_MAKER = 'maker'
 
 # Name of the service that we expose
 SERVICE_FLASH = 'on'
@@ -56,78 +55,86 @@ SERVICE_FLASH = 'on'
 _LOGGER = logging.getLogger(__name__)
 
 global_hass = 0
-global_target = 0
-global_source1 = 0
-global_source2 = 0
-global_source1_mw = 0
-global_source2_mw = 0
+global_target1 = 0
+global_target2 = 0
+global_source = 0
+global_maker = 0
 
 
 def setup(hass, config):
     """ Setup example component. """
-    global global_hass, global_target, global_source1, global_source2, global_source1_mw, global_source2_mw
+    global global_hass, global_target1, global_target2, global_source, global_maker
     global_hass = hass
     # Validate that all required config options are given
-    if not validate_config(config, {DOMAIN: [CONF_TARGET]}, _LOGGER):
+
+    if not validate_config(config, {DOMAIN: [CONF_TARGET1]}, _LOGGER):
         return False
 
-    if not validate_config(config, {DOMAIN: [CONF_SOURCE1]}, _LOGGER):
+    if not validate_config(config, {DOMAIN: [CONF_TARGET2]}, _LOGGER):
         return False
 
-    if not validate_config(config, {DOMAIN: [CONF_SOURCE2]}, _LOGGER):
+    if not validate_config(config, {DOMAIN: [CONF_SOURCE]}, _LOGGER):
         return False
 
-    if not validate_config(config, {DOMAIN: [CONF_SOURCE1_MW]}, _LOGGER):
+    if not validate_config(config, {DOMAIN: [CONF_MAKER]}, _LOGGER):
         return False
 
-    if not validate_config(config, {DOMAIN: [CONF_SOURCE2_MW]}, _LOGGER):
-        return False
-
-    global_target = config[DOMAIN][CONF_TARGET]
+    global_target1 = config[DOMAIN][CONF_TARGET1]
+    global_target2 = config[DOMAIN][CONF_TARGET2]
 
     # Validate that the target entity id exists
-    if hass.states.get(global_target) is None:
-        _LOGGER.error("Target entity id %s does not exist", global_target)
+    if hass.states.get(global_target1) is None:
+        _LOGGER.error("Target entity id %s does not exist", global_target1)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_source1 = config[DOMAIN][CONF_SOURCE1]
+    if hass.states.get(global_target2) is None:
+        _LOGGER.error("Target entity id %s does not exist", global_target2)
+
+        # Tell the bootstrapper that we failed to initialize
+        return False
+
+    global_source = config[DOMAIN][CONF_SOURCE]
 
     # Validate that the source entity ids exist
-    if hass.states.get(global_source1) is None:
+    if hass.states.get(global_source) is None:
         _LOGGER.error("Source entity id %s does not exist", global_source1)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_source2 = config[DOMAIN][CONF_SOURCE2]
+    global_maker = config[DOMAIN][CONF_MAKER]
 
-    if hass.states.get(global_source2) is None:
+    if hass.states.get(global_maker) is None:
         _LOGGER.error("Source entity id %s does not exist", global_source2)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_source1_mw = float(config[DOMAIN][CONF_SOURCE1_MW])
-    global_source2_mw = float(config[DOMAIN][CONF_SOURCE2_MW])
-
     def track_sources(entity_id, old_state, new_state):
-        """ Fired when the systemline unit power useage updates """
-        source1_current_mw = global_hass.states.get(global_source1).attributes.get('current_power_mwh', 0)
-        source2_current_mw = global_hass.states.get(global_source2).attributes.get('current_power_mwh', 0)
-        if source1_current_mw >= global_source1_mw or source2_current_mw >= global_source2_mw :
-            if source1_current_mw >= global_source1_mw :
-              print('turn_on_hi_fi_sources: turn on for %s', global_source1)
-            if source2_current_mw >= global_source2_mw :
-              print('turn_on_hi_fi_sources: turn on for %s', global_source2)
-            core.turn_on(global_hass, global_target)
-        else:
-            print('turn_on_hi_fi_sources: turn off')
-            core.turn_off(global_hass, global_target)
+        """ Fired when one of the sources state updates unit """
 
-    hass.states.track_change(global_source1, track_sources)
-    hass.states.track_change(global_source2, track_sources)
+        systemline_on = global_hass.states.get(global_maker).attributes.get('sensor_state', 0) == 'on'
+        pre_amp_on = global_hass.states.get(global_source).state == 'on'
+        if systemline_on or pre_amp_on :
+            if systemline_on :
+              print('turn_on_hi_fi_sources: turn on for SYSTEMLINE')
+              core.turn_on(global_hass, global_target1)
+            if pre_amp_on :
+              print('turn_on_hi_fi_sources: turn on for MAIN HI FI')
+              core.turn_on(global_hass, global_target1)
+              core.turn_on(global_hass, global_target2)
+            else:
+              core.turn_off(global_hass, global_target2)
+
+        else :
+            print('turn_on_hi_fi_sources: turn off ALL')
+            core.turn_off(global_hass, global_target1)
+            core.turn_off(global_hass, global_target2)
+
+    hass.states.track_change(global_source, track_sources)
+    hass.states.track_change(global_maker, track_sources)
 
     # Tells the bootstrapper that the component was successfully initialized
     return True
