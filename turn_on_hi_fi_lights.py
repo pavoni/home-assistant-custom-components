@@ -88,16 +88,14 @@ def setup(hass, config):
         source_on = global_hass.states.get(global_source).state == 'on'
         power_on = global_hass.states.get(global_power).state == 'on'
         if power_on :
-            core.turn_off(global_hass, global_scene_source)
             core.turn_on(global_hass, global_scene_power)
         elif source_on :
             core.turn_on(global_hass, global_scene_source)
-            core.turn_off(global_hass, global_scene_power)
         else:
             core.turn_off(global_hass, global_scene_source)
             core.turn_off(global_hass, global_scene_power)
             # Quick hack until scenes work for hue lights
-            core.turn_off(global_hass, 'group.hi_fi_lights')
+            core.turn_off(global_hass, 'group.special_lights')
 
     hass.states.track_change(global_source, track_sources)
     hass.states.track_change(global_power, track_sources)
