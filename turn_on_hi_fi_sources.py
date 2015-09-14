@@ -116,6 +116,7 @@ def setup(hass, config):
         """ Fired when one of the sources state updates unit """
         # During startup states are uncertain - so don't do anything
         if (global_hass.states.get(global_maker).attributes.get('sensor_state', None) == None ):
+            print('NOT INITIALISED')
             return
         systemline_on = global_hass.states.get(global_maker).attributes.get('sensor_state', 0) == 'on'
         pre_amp_on = global_hass.states.get(global_source).state == 'on'
