@@ -95,7 +95,7 @@ def setup(hass, config):
             core.turn_off(global_hass, global_scene_source)
             core.turn_off(global_hass, global_scene_power)
             # Quick hack until scenes work for hue lights
-            core.turn_off(global_hass, 'group.special_lights')
+            core.turn_off(global_hass, 'group.special')
 
     hass.states.track_change(global_source, track_sources)
     hass.states.track_change(global_power, track_sources)
