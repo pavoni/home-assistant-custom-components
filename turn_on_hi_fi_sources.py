@@ -118,6 +118,9 @@ def setup(hass, config):
         if (global_hass.states.get(global_maker).attributes.get('sensor_state', None) == None ):
             print('NOT INITIALISED')
             return
+        if (global_hass.states.get(global_source).attributes.get('today_mwh', None) == None ):
+            print('NOT INITIALISED')
+            return
         systemline_on = global_hass.states.get(global_maker).attributes.get('sensor_state', 0) == 'on'
         pre_amp_on = global_hass.states.get(global_source).state == 'on'
         if systemline_on or pre_amp_on :
