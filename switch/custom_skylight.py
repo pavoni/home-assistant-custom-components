@@ -11,14 +11,15 @@ class CustomSkylight(SwitchDevice):
         self.target_off = maker_off
         self.target_rain_sensor = maker_rain_sensor
         self.hass = new_hass
-        # Keep state private to aavoid anything else changing it!
+        # Keep state private to avoid anything else changing it!
         # Default to off - no sensor - but probably closed
         self._state = 'off'
 
         def close_skylight_if_raining(entity_id, old_state, new_state):
             """ Called when the target device changes state. """
             if self.raining:
-                self.turn_off
+                print('CustomSkylight close because of rain!')
+                self.turn_off()
 
         self.hass.states.track_change(self.target_rain_sensor, close_skylight_if_raining)
 
