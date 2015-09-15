@@ -68,15 +68,16 @@ def setup(hass, config):
         core.turn_off(hass, blind)
 
     def open_blind_if_radio_on(now):
-        if core.is_on(global_hass, global_target1):
+        if core.is_on(hass, radio):
             core.turn_on(hass, blind)
 
     def set_up_blind_sunset_timer(entity_id, old_state, new_state):
         sunset = hass.states.get(SUN).attributes.get(SET_TIME, 0)
         sunset_tm = dt_util.str_to_datetime(sunset)
         target_tm = sunset_tm + timedelta(minutes = sleep)
-        hass.track_time_change(close_blind, hour=target_tm.hour, minute=target_tm.minute, second=0)
+        hass.track_point_in_time(close_blind, target_tm)
 
+    set_up_blind_sunset_timer(None, None, None)
     hass.states.track_change(SUN, set_up_blind_sunset_timer)
 
     def radio_on(entity_id, old_state, new_state):
@@ -85,7 +86,7 @@ def setup(hass, config):
         end_window  = now.replace( hour=9, minute=45)
         target_tm = now + timedelta(minutes = snooze)
         if now > start_window and now < end_window :
-            hass.track_time_change(open_blind_if_radio_on, hour=target_tm.hour, minute=target_tm.minute, second=0)
+            hass.track_point_in_time(open_blind_if_radio_on, target_tm)
 
     hass.states.track_change(radio, radio_on)
 
