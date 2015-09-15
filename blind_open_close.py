@@ -64,10 +64,10 @@ def setup(hass, config):
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    def close_blind():
+    def close_blind(now):
         core.turn_off(hass, blind)
 
-    def open_blind_if_radio_on():
+    def open_blind_if_radio_on(now):
         if core.is_on(global_hass, global_target1):
             core.turn_on(hass, blind)
 
@@ -77,7 +77,6 @@ def setup(hass, config):
         target_tm = sunset_tm + timedelta(minutes = sleep)
         hass.track_time_change(close_blind, hour=target_tm.hour, minute=target_tm.minute, second=0)
 
-    set_up_blind_sunset_timer(None, None, None)
     hass.states.track_change(SUN, set_up_blind_sunset_timer)
 
     def radio_on(entity_id, old_state, new_state):
