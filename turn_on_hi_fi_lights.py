@@ -25,16 +25,9 @@ CONF_POWER = 'power'
 # Shortcut for the logger
 _LOGGER = logging.getLogger(__name__)
 
-global_scene_source = 0
-global_scene_power = 0
-global_source = 0
-global_power = 0
-
 
 def setup(hass, config):
     """ Setup example component. """
-    global global_hass, global_target1, global_target2, global_source, global_maker
-    global_hass = hass
     # Validate that all required config options are given
 
     if not validate_config(config, {DOMAIN: [CONF_SCENE_SOURCE]}, _LOGGER):
@@ -49,35 +42,35 @@ def setup(hass, config):
     if not validate_config(config, {DOMAIN: [CONF_POWER]}, _LOGGER):
         return False
 
-    global_scene_source = config[DOMAIN][CONF_SCENE_SOURCE]
-    global_scene_power = config[DOMAIN][CONF_SCENE_POWER]
+    scene_source = config[DOMAIN][CONF_SCENE_SOURCE]
+    scene_power = config[DOMAIN][CONF_SCENE_POWER]
 
     # Validate that the target entity id exists
-    if hass.states.get(global_scene_power) is None:
-        _LOGGER.error("Target entity id %s does not exist", global_scene_power)
+    if hass.states.get(scene_power) is None:
+        _LOGGER.error("Target entity id %s does not exist", scene_power)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    if hass.states.get(global_scene_source) is None:
-        _LOGGER.error("Target entity id %s does not exist", global_scene_source)
+    if hass.states.get(scene_source) is None:
+        _LOGGER.error("Target entity id %s does not exist", scene_source)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_source = config[DOMAIN][CONF_SOURCE]
+    source = config[DOMAIN][CONF_SOURCE]
 
     # Validate that the source entity ids exist
-    if hass.states.get(global_source) is None:
-        _LOGGER.error("Source entity id %s does not exist", global_source)
+    if hass.states.get(source) is None:
+        _LOGGER.error("Source entity id %s does not exist", source)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_power = config[DOMAIN][CONF_POWER]
+    power = config[DOMAIN][CONF_POWER]
 
-    if hass.states.get(global_power) is None:
-        _LOGGER.error("Source entity id %s does not exist", global_power)
+    if hass.states.get(power) is None:
+        _LOGGER.error("Source entity id %s does not exist", power)
 
         # Tell the bootstrapper that we failed to initialize
         return False
@@ -85,20 +78,20 @@ def setup(hass, config):
     def track_sources(entity_id, old_state, new_state):
         """ Fired when one of the sources state updates unit """
 
-        source_on = global_hass.states.get(global_source).state == 'on'
-        power_on = global_hass.states.get(global_power).state == 'on'
+        source_on = hass.states.get(source).state == 'on'
+        power_on = hass.states.get(power).state == 'on'
         if power_on :
-            core.turn_on(global_hass, global_scene_power)
+            core.turn_on(hass, scene_power)
         elif source_on :
-            core.turn_on(global_hass, global_scene_source)
+            core.turn_on(hass, scene_source)
         else:
-            core.turn_off(global_hass, global_scene_source)
-            core.turn_off(global_hass, global_scene_power)
-            # Quick hack until scenes work for hue lights
-            core.turn_off(global_hass, 'group.special')
+            # core.turn_off(hass, scene_source)
+            # core.turn_off(hass, scene_power)
+            # Hack until scenes work properly
+            core.turn_off(hass, 'group.special')
 
-    hass.states.track_change(global_source, track_sources)
-    hass.states.track_change(global_power, track_sources)
+    hass.states.track_change(source, track_sources)
+    hass.states.track_change(power, track_sources)
 
     # Tells the bootstrapper that the component was successfully initialized
     return True
