@@ -1,29 +1,6 @@
 """
 custom_components.turn_on_hi_fi_sources
-~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Example component to target an entity_id to:
- - turn it on at 7AM in the morning
- - turn it on if anyone comes home and it is off
- - turn it off if all lights are turned off
- - turn it off if all people leave the house
- - offer a service to turn it on for 10 seconds
-
-Configuration:
-
-To use the Example custom component you will need to add the following to
-your config/configuration.yaml
-
-example:
-  target: TARGET_ENTITY
-
-Variable:
-
-target
-*Required
-TARGET_ENTITY should be one of your devices that can be turned on and off,
-ie a light or a switch. Example value could be light.Ceiling or switch.AC
-(if you have these devices with those names).
 """
 import time
 import logging
@@ -54,17 +31,8 @@ SERVICE_FLASH = 'on'
 # Shortcut for the logger
 _LOGGER = logging.getLogger(__name__)
 
-global_hass = 0
-global_target1 = 0
-global_target2 = 0
-global_source = 0
-global_maker = 0
-
 
 def setup(hass, config):
-    """ Setup example component. """
-    global global_hass, global_target1, global_target2, global_source, global_maker
-    global_hass = hass
     # Validate that all required config options are given
 
     if not validate_config(config, {DOMAIN: [CONF_TARGET1]}, _LOGGER):
@@ -79,35 +47,35 @@ def setup(hass, config):
     if not validate_config(config, {DOMAIN: [CONF_MAKER]}, _LOGGER):
         return False
 
-    global_target1 = config[DOMAIN][CONF_TARGET1]
-    global_target2 = config[DOMAIN][CONF_TARGET2]
+    target1 = config[DOMAIN][CONF_TARGET1]
+    target2 = config[DOMAIN][CONF_TARGET2]
 
     # Validate that the target entity id exists
-    if hass.states.get(global_target1) is None:
-        _LOGGER.error("Target entity id %s does not exist", global_target1)
+    if hass.states.get(target1) is None:
+        _LOGGER.error("Target entity id %s does not exist", target1)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    if hass.states.get(global_target2) is None:
-        _LOGGER.error("Target entity id %s does not exist", global_target2)
+    if hass.states.get(target2) is None:
+        _LOGGER.error("Target entity id %s does not exist", target2)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_source = config[DOMAIN][CONF_SOURCE]
+    source = config[DOMAIN][CONF_SOURCE]
 
     # Validate that the source entity ids exist
-    if hass.states.get(global_source) is None:
-        _LOGGER.error("Source entity id %s does not exist", global_source1)
+    if hass.states.get(source) is None:
+        _LOGGER.error("Source entity id %s does not exist", source)
 
         # Tell the bootstrapper that we failed to initialize
         return False
 
-    global_maker = config[DOMAIN][CONF_MAKER]
+    maker = config[DOMAIN][CONF_MAKER]
 
-    if hass.states.get(global_maker) is None:
-        _LOGGER.error("Source entity id %s does not exist", global_source2)
+    if hass.states.get(maker) is None:
+        _LOGGER.error("Source entity id %s does not exist", maker)
 
         # Tell the bootstrapper that we failed to initialize
         return False
@@ -115,37 +83,34 @@ def setup(hass, config):
     def track_sources(entity_id, old_state, new_state):
         """ Fired when one of the sources state updates unit """
         # During startup states are uncertain - so don't do anything
-        if (global_hass.states.get(global_maker).attributes.get('sensor_state', None) == None ):
+        if (hass.states.get(maker).attributes.get('sensor_state', None) == None ):
             print('NOT INITIALISED')
             return
-        if (global_hass.states.get(global_source).attributes.get('today_mwh', None) == None ):
-            print('NOT INITIALISED')
-            return
-        systemline_on = global_hass.states.get(global_maker).attributes.get('sensor_state', 0) == 'on'
-        pre_amp_on = global_hass.states.get(global_source).state == 'on'
+        systemline_on = hass.states.get(maker).attributes.get('sensor_state', 0) == 'on'
+        pre_amp_on = hass.states.get(source).state == 'on' and (hass.states.get(source).attributes.get('today_mwh', None) != None )
         if systemline_on or pre_amp_on :
             if systemline_on :
                 print('turn_on_hi_fi_sources: turn on for SYSTEMLINE')
-                if not core.is_on(global_hass, global_target1):
-                    core.turn_on(global_hass, global_target1)
+                if not core.is_on(hass, target1):
+                    core.turn_on(hass, target1)
             if pre_amp_on :
                 print('turn_on_hi_fi_sources: turn on for MAIN HI FI')
-                if not core.is_on(global_hass, global_target1):
-                    core.turn_on(global_hass, global_target1)
-                if not core.is_on(global_hass, global_target2):
-                    core.turn_on(global_hass, global_target2)
-            elif core.is_on(global_hass, global_target2):
-                core.turn_off(global_hass, global_target2)
+                if not core.is_on(hass, target1):
+                    core.turn_on(hass, target1)
+                if not core.is_on(hass, target2):
+                    core.turn_on(hass, target2)
+            elif core.is_on(hass, target2):
+                core.turn_off(hass, target2)
 
         else :
             print('turn_on_hi_fi_sources: turn off ALL')
-            if core.is_on(global_hass, global_target1):
-                core.turn_off(global_hass, global_target1)
-            if core.is_on(global_hass, global_target2):
-                core.turn_off(global_hass, global_target2)
+            if core.is_on(hass, target1):
+                core.turn_off(hass, target1)
+            if core.is_on(hass, target2):
+                core.turn_off(hass, target2)
 
-    hass.states.track_change(global_source, track_sources)
-    hass.states.track_change(global_maker, track_sources)
+    hass.states.track_change(source, track_sources)
+    hass.states.track_change(maker, track_sources)
 
     # Tells the bootstrapper that the component was successfully initialized
     return True
