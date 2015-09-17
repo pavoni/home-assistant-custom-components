@@ -68,7 +68,7 @@ def setup(hass, config):
         core.turn_off(hass, blind)
 
     def open_blind_if_radio_on(now):
-        radio_on = hass.states.get(radio).attributes.get('sensor_state', 0) == 'on'
+        radio_on = core.is_on(hass, radio)
         if radio_on:
             core.turn_on(hass, blind)
 
@@ -86,8 +86,9 @@ def setup(hass, config):
         start_window = now.replace( hour=6, minute=45)
         end_window  = now.replace( hour=9, minute=45)
         target_tm = now + timedelta(minutes = snooze)
-        radio_on = hass.states.get(radio).attributes.get('sensor_state', 0) == 'on'
-        if radio_on and now > start_window and now < end_window :
+        radio_on = core.is_on(hass, radio)
+        blind_closed = not core.is_on(hass, blind)
+        if blind_closed and radio_on and now > start_window and now < end_window :
             hass.track_point_in_time(open_blind_if_radio_on, target_tm)
 
     hass.states.track_change(radio, radio_on)
