@@ -1,6 +1,12 @@
+import logging
+
 from homeassistant.components.switch import SwitchDevice
 
 import homeassistant.components as core
+from homeassistant.helpers.event import track_state_change
+
+# Shortcut for the logger
+_LOGGER = logging.getLogger(__name__)
 
 class CustomSkylight(SwitchDevice):
     """ Wraps two wemo makers with momentary switches """
@@ -18,10 +24,10 @@ class CustomSkylight(SwitchDevice):
         def close_skylight_if_raining(entity_id, old_state, new_state):
             """ Called when the target device changes state. """
             if self.raining:
-                print('CustomSkylight close because of rain!')
+                _LOGGER.warning('CustomSkylight close because of rain!')
                 self.turn_off()
 
-        self.hass.states.track_change(self.target_rain_sensor, close_skylight_if_raining)
+        track_state_change(self.hass, self.target_rain_sensor, close_skylight_if_raining)
 
     @property
     def state(self):
@@ -40,6 +46,7 @@ class CustomSkylight(SwitchDevice):
             sensor_state = self.hass.states.get(self.target_rain_sensor).attributes.get('sensor_state', 'failed')
         except AttributeError:
             sensor_state = 'failed'
+            _LOGGER.warning('CustomSkylight could not comminucate with rain sensor!')
         return not (sensor_state == 'off')
 
 
@@ -49,7 +56,7 @@ class CustomSkylight(SwitchDevice):
             core.turn_on(self.hass, self.target_on)
             self._state = 'on'
         else:
-            print('CustomSkylight open - refused because of rain!')
+            _LOGGER.warning('CustomSkylight open - refused because of rain!')
 
 
     def turn_off(self):
