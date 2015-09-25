@@ -5,7 +5,6 @@ custom_components.turn_on_hi_fi_sources
 import time
 import logging
 
-import homeassistant.loader as loader
 from homeassistant.helpers import validate_config
 import homeassistant.components as core
 from homeassistant.helpers.event import track_state_change
@@ -77,7 +76,7 @@ def setup(hass, config):
                 core.turn_off(hass, target2)
 
         else :
-            _LOGGER.warning('turn of all')
+            _LOGGER.warning('turn off all')
             if core.is_on(hass, target1):
                 core.turn_off(hass, target1)
             if core.is_on(hass, target2):
