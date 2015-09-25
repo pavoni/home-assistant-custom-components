@@ -57,7 +57,7 @@ def setup(hass, config):
             return
         # During startup states are uncertain - so don't do anything
         if (hass.states.get(maker).attributes.get('sensor_state', None) == None ):
-            _LOGGER.warning('Syetemline switch not initialised')
+            _LOGGER.warning('Systemline switch not initialised')
             return
         systemline_on = hass.states.get(maker).attributes.get('sensor_state', 0) == 'on'
         pre_amp_on = hass.states.get(source).state == 'on' and (hass.states.get(source).attributes.get('today_mwh', None) != None )
