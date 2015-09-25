@@ -2,11 +2,11 @@ import time
 import logging
 from datetime import timedelta
 
-from homeassistant.const import STATE_HOME, STATE_NOT_HOME, STATE_ON, STATE_OFF
-import homeassistant.loader as loader
 from homeassistant.helpers import validate_config
 import homeassistant.util.dt as dt_util
 import homeassistant.components as core
+from homeassistant.helpers.event import track_state_change, track_point_in_time
+
 
 # The domain of your component. Should be equal to the name of your component
 DOMAIN = "blind_open_close"
@@ -51,19 +51,6 @@ def setup(hass, config):
     snooze = int(config[DOMAIN][CONF_SNOOZE_DELAY])
     sleep = int(config[DOMAIN][CONF_SLEEP_DELAY])
 
-    # Validate that the radio entity id exists
-    if hass.states.get(radio) is None:
-        _LOGGER.error("Radio entity id %s does not exist", radio)
-
-        # Tell the bootstrapper that we failed to initialize
-        return False
-
-    if hass.states.get(blind) is None:
-        _LOGGER.error("Blind entity id %s does not exist", blind)
-
-        # Tell the bootstrapper that we failed to initialize
-        return False
-
     def close_blind(now):
         core.turn_off(hass, blind)
 
@@ -76,10 +63,10 @@ def setup(hass, config):
         sunset = hass.states.get(SUN).attributes.get(SET_TIME, 0)
         sunset_tm = dt_util.str_to_datetime(sunset)
         target_tm = sunset_tm + timedelta(minutes = sleep)
-        hass.track_point_in_time(close_blind, target_tm)
+        track_point_in_time(hass, close_blind, target_tm)
 
     set_up_blind_sunset_timer(None, None, None)
-    hass.states.track_change(SUN, set_up_blind_sunset_timer)
+    track_state_change(hass, SUN, set_up_blind_sunset_timer)
 
     def radio_on(entity_id, old_state, new_state):
         now = dt_util.now()
@@ -89,9 +76,9 @@ def setup(hass, config):
         radio_on = core.is_on(hass, radio)
         blind_closed = not core.is_on(hass, blind)
         if blind_closed and radio_on and now > start_window and now < end_window :
-            hass.track_point_in_time(open_blind_if_radio_on, target_tm)
+            track_point_in_time(hass, open_blind_if_radio_on, target_tm)
 
-    hass.states.track_change(radio, radio_on)
+    track_state_change(hass, radio, radio_on)
 
     # Tells the bootstrapper that the component was successfully initialized
     return True
