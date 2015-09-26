@@ -20,7 +20,7 @@ DOMAIN = "custom_platform_sensor"
 def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """ Find and return custom sensors for rain_sensor and hi_fi_systemline. """
     add_devices_callback([
-        CustomSensor('Home',group.home, hass)
+        CustomSensor('Greg & Juliet', group.home, hass)
         CustomSensorMaker('Systemline', 'switch.hi_fi_systemline_sensor', hass),
         CustomSensorRain('Weather', 'switch.rain_sensor', hass),
         CustomSensorInsight('Preamp', 'switch.hi_fi_preamp', hass),
