@@ -60,13 +60,13 @@ def setup(hass, config):
         end_window  = now.replace( hour=23, minute=00)
         if (now > start_window and now < end_window):
             if current >= open_at and not core.is_on(hass, skylight):
-                _LOGGER.warning('open skylight at %s'.format(current))
+                _LOGGER.warning('open skylight at {}'.format(current))
                 core.turn_on(hass, skylight)
             elif current <= close_at and core.is_on(hass, skylight):
-                _LOGGER.warning('close skylight at %s'.format(current))
+                _LOGGER.warning('close skylight at {}'.format(current))
                 core.turn_off(hass, skylight)
         else:
-            _LOGGER.warning('dont change skylight at night (%s)'.format(current))
+            _LOGGER.warning('dont change skylight at night ({})'.format(current))
 
 
 
