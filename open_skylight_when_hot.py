@@ -50,10 +50,10 @@ def setup(hass, config):
 
     def track_temperature(entity_id, old_state, new_state):
         """ Fired when one of the sources state updates unit """
+        _LOGGER.warning('track temperature callback')
         if not (hass.states.get(thermostat) and hass.states.get(skylight)):
             _LOGGER.warning('Components not initialised')
             return
-        import pdb; pdb.set_trace()
         current = hass.states.get(thermostat).attributes.get('current_temperature', None)
         now = dt_util.now()
         start_window = now.replace( hour=8, minute=00)
