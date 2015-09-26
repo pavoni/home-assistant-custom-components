@@ -61,7 +61,8 @@ def setup(hass, config):
             # core.turn_off(hass, scene_source)
             # core.turn_off(hass, scene_power)
             # Hack until scenes work properly
-            core.turn_off(hass, 'group.special')
+            core.turn_off(hass, 'light.amplifier')
+            core.turn_off(hass, 'light.cupboard')
 
     track_state_change(hass, source, track_sources)
     track_state_change(hass, power, track_sources)
