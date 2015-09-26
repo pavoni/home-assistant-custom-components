@@ -24,9 +24,6 @@ CONF_TARGET2 = 'target2'
 CONF_SOURCE = 'source'
 CONF_MAKER = 'maker'
 
-# Name of the service that we expose
-SERVICE_FLASH = 'on'
-
 # Shortcut for the logger
 _LOGGER = logging.getLogger(__name__)
 

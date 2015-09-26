@@ -24,7 +24,6 @@ CONF_POWER = 'power'
 # Shortcut for the logger
 _LOGGER = logging.getLogger(__name__)
 
-
 def setup(hass, config):
     """ Setup example component. """
     # Validate that all required config options are given
