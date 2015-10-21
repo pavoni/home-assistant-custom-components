@@ -57,24 +57,24 @@ def setup(hass, config):
             _LOGGER.warning('Systemline switch not initialised')
             return
         systemline_on = hass.states.get(maker).attributes.get('sensor_state', 0) == 'on'
-        pre_amp_on = hass.states.get(source).state == 'on' and (hass.states.get(source).attributes.get('today_mwh', None) != None )
+        pre_amp_on = hass.states.get(source).state == 'on' and (hass.states.get(source).attributes.get('current_power_mwh', None) != None )
         if systemline_on or pre_amp_on :
             if systemline_on :
-                _LOGGER.warning('turn on for SYSTEMLINE')
                 if not core.is_on(hass, target1):
+                    _LOGGER.warning('turn on for SYSTEMLINE')
                     core.turn_on(hass, target1)
             if pre_amp_on :
-                _LOGGER.warning('turn on for MAIN HI FI')
                 if not core.is_on(hass, target1):
                     core.turn_on(hass, target1)
                 if not core.is_on(hass, target2):
+                    _LOGGER.warning('turn on for MAIN HI FI')
                     core.turn_on(hass, target2)
             elif core.is_on(hass, target2):
                 core.turn_off(hass, target2)
 
         else :
-            _LOGGER.warning('turn off all')
             if core.is_on(hass, target1):
+                _LOGGER.warning('turn off all')
                 core.turn_off(hass, target1)
             if core.is_on(hass, target2):
                 core.turn_off(hass, target2)
