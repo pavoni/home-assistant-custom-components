@@ -17,6 +17,7 @@ DEPENDENCIES = ['group', 'scene']
 # Configuration key for the entity id we are targetting
 CONF_SCENE_SOURCE = 'scene_source'
 CONF_SCENE_POWER = 'scene_power'
+CONF_SCENE_OFF = 'scene_off'
 
 CONF_SOURCE = 'source'
 CONF_POWER = 'power'
@@ -34,6 +35,10 @@ def setup(hass, config):
     if not validate_config(config, {DOMAIN: [CONF_SCENE_POWER]}, _LOGGER):
         return False
 
+
+    if not validate_config(config, {DOMAIN: [CONF_SCENE_OFF]}, _LOGGER):
+        return False
+
     if not validate_config(config, {DOMAIN: [CONF_SOURCE]}, _LOGGER):
         return False
 
@@ -42,6 +47,7 @@ def setup(hass, config):
 
     scene_source = config[DOMAIN][CONF_SCENE_SOURCE]
     scene_power = config[DOMAIN][CONF_SCENE_POWER]
+    scene_off = config[DOMAIN][CONF_SCENE_OFF]
     source = config[DOMAIN][CONF_SOURCE]
     power = config[DOMAIN][CONF_POWER]
 
@@ -57,11 +63,7 @@ def setup(hass, config):
         elif source_on :
             core.turn_on(hass, scene_source)
         else:
-            # core.turn_off(hass, scene_source)
-            # core.turn_off(hass, scene_power)
-            # Hack until scenes work properly
-            core.turn_off(hass, 'light.amplifier')
-            core.turn_off(hass, 'light.cupboard')
+            core.turn_on(hass, scene_off)
 
     track_state_change(hass, source, track_sources)
     track_state_change(hass, power, track_sources)
