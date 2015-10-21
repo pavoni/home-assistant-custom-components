@@ -51,7 +51,6 @@ def setup(hass, config):
 
     def track_temperature(entity_id, old_state, new_state):
         """ Fired when one of the sources state updates unit """
-        _LOGGER.warning('track temperature callback')
         if not (hass.states.get(thermostat) and hass.states.get(skylight)):
             _LOGGER.warning('Components not initialised')
             return
@@ -66,10 +65,6 @@ def setup(hass, config):
             elif current <= close_at and core.is_on(hass, skylight):
                 _LOGGER.warning('close skylight at {}'.format(current))
                 core.turn_off(hass, skylight)
-        else:
-            _LOGGER.warning('dont change skylight at night ({})'.format(current))
-
-
 
     track_state_change(hass, thermostat, track_temperature)
 
