@@ -67,7 +67,7 @@ def setup(hass, config):
         radio_on = core.is_on(hass, radio)
         if radio_on:
             core.turn_on(hass, blind)
-            time.sleep(10)
+            time.sleep(20)
             sun_up = hass.states.get(SUN) == 'above_horizon'
             if not sun_up:
                 core.turn_on(hass, light)
