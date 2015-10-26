@@ -68,7 +68,7 @@ def setup(hass, config):
         if radio_on:
             core.turn_on(hass, blind)
             time.sleep(20)
-            sun_up = hass.states.get(SUN) == 'above_horizon'
+            sun_up = hass.states.get(SUN).state == 'above_horizon'
             if not sun_up:
                 core.turn_on(hass, light)
                 set_up_blind_sunrise_timer(None, None, None)
