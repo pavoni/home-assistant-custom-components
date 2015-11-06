@@ -29,7 +29,9 @@ class EmptySwitch(SwitchDevice):
     def turn_on(self, **kwargs):
         """ Turn the entity on. """
         self.my_state = 'on'
+        self.hass.states.set(self.entity_id, self.my_state)
 
     def turn_off(self, **kwargs):
         """ Turn the entity off. """
         self.my_state = 'off'
+        self.hass.states.set(self.entity_id, self.my_state)
