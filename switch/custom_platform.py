@@ -22,10 +22,10 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
         CustomBlind('Blind', 'switch.blind_toggle', hass),
         CustomGate('Gate', 'switch.gate_toggle', hass),
         CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass),
-        EmptySwitch('Greg takes a trip', hass),
-        EmptySwitch('Juliet takes a trip', hass),
-        EmptySwitch('Auto_open gate for Greg', hass),
-        EmptySwitch('Auto_open gatefor Juliet', hass)
+        EmptySwitch('Greg trip', hass),
+        EmptySwitch('Juliet trip', hass),
+        EmptySwitch('Auto gate Greg ', hass),
+        EmptySwitch('Auto gate Juliet', hass)
     ])
 
 
