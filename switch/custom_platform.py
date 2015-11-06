@@ -8,6 +8,7 @@ Custom platform to import custom switches.
 from custom_components.switch.custom_blind import CustomBlind
 from custom_components.switch.custom_gate import CustomGate
 from custom_components.switch.custom_skylight import CustomSkylight
+from custom_components.switch.empty_switch import EmptySwitch
 import logging
 
 DEPENDENCIES = []
@@ -20,7 +21,11 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     add_devices_callback([
         CustomBlind('Blind', 'switch.blind_toggle', hass),
         CustomGate('Gate', 'switch.gate_toggle', hass),
-        CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass)
+        CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass),
+        EmptySwitch('Greg takes a trip', hass),
+        EmptySwitch('Juliet takes a trip', hass),
+        EmptySwitch('Auto_open gate for Greg', hass),
+        EmptySwitch('Auto_open gatefor Juliet', hass)
     ])
 
 
