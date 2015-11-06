@@ -24,7 +24,7 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
         CustomSkylight('Skylight', 'switch.skylight_open', 'switch.skylight_close', 'switch.rain_sensor', hass),
         EmptySwitch('Greg trip', hass),
         EmptySwitch('Juliet trip', hass),
-        EmptySwitch('Auto gate Greg ', hass),
+        EmptySwitch('Auto gate Greg', hass),
         EmptySwitch('Auto gate Juliet', hass)
     ])
 
