@@ -58,7 +58,8 @@ def setup(hass, config):
     sleep = int(config[DOMAIN][CONF_SLEEP_DELAY])
 
     def close_blind(now):
-        core.turn_off(hass, blind)
+        # core.turn_off(hass, blind)
+        pass
 
     def turn_off_light(now):
         core.turn_off(hass, light)
