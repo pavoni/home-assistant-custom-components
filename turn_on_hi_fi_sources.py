@@ -56,6 +56,10 @@ def setup(hass, config):
         if (hass.states.get(maker).attributes.get('sensor_state', None) == None ):
             _LOGGER.warning('Systemline switch not initialised')
             return
+        if not (hass.states.get(source) == 'on' or 
+                hass.states.get(source) == 'standby'):
+            _LOGGER.warning('Pre-amp not initialised')
+            return
         systemline_on = hass.states.get(maker).attributes.get('sensor_state', 0) == 'on'
         pre_amp_on = hass.states.get(source).state == 'on' and (hass.states.get(source).attributes.get('current_power_mwh', None) != None )
         if systemline_on or pre_amp_on :
