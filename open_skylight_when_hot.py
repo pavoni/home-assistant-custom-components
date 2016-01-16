@@ -54,7 +54,11 @@ def setup(hass, config):
         if not (hass.states.get(thermostat) and hass.states.get(skylight)):
             _LOGGER.warning('Components not initialised')
             return
+        # if it's a thermostat this will work
         current = hass.states.get(thermostat).attributes.get('current_temperature', None)
+        # if not try a sensor
+        if current is None:
+            current = hass.states.get(thermostat).state
         now = dt_util.now()
         start_window = now.replace( hour=8, minute=00)
         end_window  = now.replace( hour=23, minute=00)
