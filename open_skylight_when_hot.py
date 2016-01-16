@@ -58,7 +58,7 @@ def setup(hass, config):
         current = hass.states.get(thermostat).attributes.get('current_temperature', None)
         # if not try a sensor
         if current is None:
-            current = hass.states.get(thermostat).state
+            current = float(hass.states.get(thermostat).state)
         now = dt_util.now()
         start_window = now.replace( hour=8, minute=00)
         end_window  = now.replace( hour=23, minute=00)
