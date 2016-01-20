@@ -3,8 +3,8 @@ from custom_components.switch.custom_wemo_maker import CustomWemoMaker
 import homeassistant.components as core
 
 # Press open button twice to avoid partial open issue
-REPRESS_AFTER 25
-REPRESS_GAP 1.5
+REPRESS_AFTER = 25
+REPRESS_GAP = 1.5
 
 class CustomGate(CustomWemoMaker):
     """ Wraps an exising switch, changing behaviour. """
