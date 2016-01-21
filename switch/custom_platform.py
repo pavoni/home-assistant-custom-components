@@ -8,7 +8,6 @@ Custom platform to import custom switches.
 from custom_components.switch.custom_blind import CustomBlind
 from custom_components.switch.custom_gate import CustomGate
 from custom_components.switch.custom_skylight import CustomSkylight
-from custom_components.switch.empty_switch import EmptySwitch
 import logging
 
 DEPENDENCIES = []
