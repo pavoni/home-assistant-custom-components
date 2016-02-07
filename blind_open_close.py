@@ -57,16 +57,14 @@ def setup(hass, config):
     snooze = int(config[DOMAIN][CONF_SNOOZE_DELAY])
     sleep = int(config[DOMAIN][CONF_SLEEP_DELAY])
 
-    def close_blind(now):
-        # core.turn_off(hass, blind)
-        pass
-
     def turn_off_light(now):
         core.turn_off(hass, light)
 
     def open_blind_if_radio_on(now):
         radio_on = core.is_on(hass, radio)
-        if radio_on:
+        blind_closed = not core.is_on(hass, blind)
+
+        if radio_on and blind_closed:
             core.turn_on(hass, blind)
             time.sleep(20)
             sun_up = hass.states.get(SUN).state == 'above_horizon'
@@ -74,21 +72,11 @@ def setup(hass, config):
                 core.turn_on(hass, light)
                 set_up_blind_sunrise_timer(None, None, None)
 
-
-    def set_up_blind_sunset_timer(entity_id, old_state, new_state):
-        sunset = hass.states.get(SUN).attributes.get(SET_TIME, 0)
-        sunset_tm = dt_util.str_to_datetime(sunset)
-        target_tm = sunset_tm + timedelta(minutes = sleep)
-        track_point_in_time(hass, close_blind, target_tm)
-
     def set_up_blind_sunrise_timer(entity_id, old_state, new_state):
         sunrise = hass.states.get(SUN).attributes.get(RISE_TIME, 0)
         sunrise_tm = dt_util.str_to_datetime(sunrise)
         target_tm = sunrise_tm + timedelta(minutes = sleep)
         track_point_in_time(hass, turn_off_light, target_tm)
-
-    set_up_blind_sunset_timer(None, None, None)
-    track_state_change(hass, SUN, set_up_blind_sunset_timer)
 
     def radio_on(entity_id, old_state, new_state):
         now = dt_util.now()
